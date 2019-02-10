@@ -18,9 +18,7 @@ If the extension pack is not installed, then you cannot open a remote desktop co
 To install the extension pack:
 
 * Download the file that contains the extension pack. You find it on [this link](https://download.virtualbox.org/virtualbox). Click on the link that represents the major version of VirtualBox that you are using. For example, if you are using version `5.2.26r128414`, then click on `5.2.26`. Then download the file named `Oracle_VM_VirtualBox_Extension_Pack-<the exact version of virtualbox>.vbox-extpack`.
-* Run the command below:
-
-    VBoxManage extpack install --replace "Oracle_VM_VirtualBox_Extension_Pack-<the exact version of virtualbox>.vbox-extpack"
+* Run this command: `VBoxManage extpack install --replace "Oracle_VM_VirtualBox_Extension_Pack-<the exact version of virtualbox>.vbox-extpack"`
 
 For example:
 
