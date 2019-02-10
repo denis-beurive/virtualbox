@@ -47,13 +47,17 @@ Edit the file `build.sh` and set the values of the variables listed below:
 
 > You must stop the VM at the end of the installation process. Do not restart the VM from the installation menu. You need to eject the installation DVD before restarting the VM. And you cannot eject the DVD while the VM is running.
 
+## Show information about a VM
+
+    VBoxManage showvminfo "ubuntu-minimal-18.04"
+
 ## Eject the DVD
 
 Eject the DVD after the installation: [https://techotom.wordpress.com/2012/09/22/ejecting-an-iso-from-a-virtualbox-vm-using-vboxmanage/](https://techotom.wordpress.com/2012/09/22/ejecting-an-iso-from-a-virtualbox-vm-using-vboxmanage/)
 
 Example:
 
-The DVD has been create using the command line:
+The DVD has been created using the command line below:
 
     VBoxManage storageattach "${VM_NAME}" --storagectl "IDE Controller" \
                                           --port 0 \
@@ -86,6 +90,119 @@ You can also execute the command below:
         take "fresh-install" \
         --description "This is a fresh installation"
 
+## Install the guest addition
+
+On the guest:
+
+    wget https://download.virtualbox.org/virtualbox/5.2.26/VBoxGuestAdditions_5.2.26.iso
+
+Install the tools required to build the guest addition:
+
+    sudo apt-get install gcc
+    sudo apt-get install perl
+    sudo apt-get install build-essential
+
+Then mount the ISO file:
+
+    mkdir iso
+    sudo mount -o loop VBoxGuestAdditions_5.2.26.iso ./iso
+    cd iso
+    sudo ./VBoxLinuxAdditions.run
+
+> This action may take a while.
+
+The reboot the guest:
+
+    sudo reboot
+
+Once the guest addition is installed, we can configure the guest to use it.
+
+## Set a shared folder
+
+* We want the guest user "denis" to be allowed to access the shared folder.
+* On the guest, We want the shared folder to be `/home/denis/projects`.
+* On the host, the shared folder will be `/home/denis/Documents/Python/shared`.
+
+First, make sure that the _guest addition_ is installed (on the guest).
+
+On the guest, halt the VM: `sudo halt`
+
+On the host, stop the VM:
+
+    VBoxManage controlvm "ubuntu-minimal-18.04" poweroff
+
+Configure the shared folder:
+   
+    VBoxManage sharedfolder add "ubuntu-minimal-18.04" \
+               --name shared1 \
+               --hostpath /home/denis/Documents/Python/shared
+
+> Make sure that the directory specified by the option `--hostpath` exists (on the host)!
+
+> I you need to remove the shared folder, execute the following command: `VBoxManage sharedfolder remove "ubuntu-minimal-18.04" --name shared1`
+
+Please note that we don't specify the path to the guest where the folder will be accessible from. This configuration is done on the guest. See below.
+
+Start the VM:
+
+    VBoxHeadless --startvm "ubuntu-minimal-18.04" --vrde on
+
+On the guest, we will configure the system so it will mount the shared folder to a given directory at boot time.
+
+Get the UID and the GID of the user "denis":
+
+    denis@python-dev:~$ echo "denis UID:" $(id -u) && echo "denis GID:" $(id -g)
+    denis UID: 1000
+    denis GID: 1000
+
+Make sure that the directory `/home/denis/projects` exists on the guest:
+
+    mkdir -p /home/denis/projects
+
+Edit the file `/etc/fstab` as `root` and add the line below:
+
+    shared1    /home/denis/projects    vboxsf    defaults,uid=1000,gid=1000,umask=0077    0    0
+
+> see [this document](http://debian-facile.org/doc:systeme:fstab) for details.
+
+Make sure that the kernel module `vboxfs` exists on the guest (it should):
+
+    $ find /lib/modules/$(uname -r) -type f -name '*.ko' | grep vboxsf
+    /lib/modules/4.15.0-45-generic/misc/vboxsf.ko
+    /lib/modules/4.15.0-45-generic/kernel/ubuntu/vbox/vboxsf/vboxsf.ko
+
+Then add the kernel module `vboxfs` to the list of loaded modules at boot time. To do that, edit the file `/etc/modules` (as `root`). And add the line "`vboxfs`" to the end of the file. Example of `/etc/modules`:
+
+    # /etc/modules: kernel modules to load at boot time.
+    #
+    # This file contains the names of kernel modules that should be loaded
+    # at boot time, one per line. Lines beginning with "#" are ignored.
+
+    vboxfs
+
+On the host, make sure that the VM is well configured:
+
+    VBoxManage showvminfo "ubuntu-minimal-18.04" | grep shared1
+    Name: 'shared1', Host path: '/home/denis/Documents/Python/shared' (machine mapping), writable
+
+> If, for some reason, you forgot to configure a shared folder on the VM, then the guest will not be able to boot correctly. The system will run in emergency mode, and you won't be able to connect through SSH. In this case, the only way to access the guest is to use a remote desktop connexion.
+
+Now reboot the guest.
+
+    sudo reboot
+
+Make sure that the sharing works as expected.
+
+On the host:
+
+    touch /home/denis/Documents/Python/shared/test.txt
+
+On the guest:
+
+    if [ -e /home/denis/projects/test.txt ]; then echo "OK"; else echo "FAILED"; fi
+
+> Please note that, for some OS, you may need to explicitly add the kernel module `vboxfs` to the list of modules loaded at boot time. You do that by adding the line "`vboxfs`" to the end of the file `/etc/modules`. However, on Ubuntu 18.04, this is not necessaty.
+
 # Notes for Ubuntu 18.04 minimal
 
 ## SSH configuration
@@ -102,7 +219,7 @@ You can then open an SSH connexion from the host to the guest:
 
 > This command assumes that you've created a user named "denis". We specify the port number 2222 since that's the configuration we've applied on the VM.
 
-### Public/Provate Key authentication
+### Public/Private Key authentication
 
 Then, you need to configure key authentication.
 
