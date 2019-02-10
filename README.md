@@ -42,3 +42,10 @@ Stop the VM:
 
 Eject the DVD after the installation: [https://techotom.wordpress.com/2012/09/22/ejecting-an-iso-from-a-virtualbox-vm-using-vboxmanage/](https://techotom.wordpress.com/2012/09/22/ejecting-an-iso-from-a-virtualbox-vm-using-vboxmanage/)
 
+Example:
+
+    VBoxManage storageattach "ubuntu-minimal-18.04" \
+    --storagectl "IDE Controller" \
+    --port 0 \
+    --device 1 \
+    --medium emptydrive
