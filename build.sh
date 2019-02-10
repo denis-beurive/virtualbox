@@ -63,6 +63,8 @@ echo
 cd "${VM_FOLDER}" && rm -rf * && cd - && echo "VM folder deleted"
 rm -f "${VM_VDI_PATH}" && echo "VDI deleted"
 
+sleep 2
+
 readonly MACHINES_PATH=$(VBoxManage list systemproperties | grep "Default machine folder:" | sed 's/^Default machine folder:\s*//')
 if [ ! "${MACHINES_PATH}" = "${VM_FOLDER}" ]; then
     VBoxManage setproperty machinefolder "${VM_FOLDER}" || error "Cannot set the path to the machines directory!"
@@ -137,7 +139,7 @@ if [ ${VBOX_EXT_PACK} -eq 0 ]; then
     echo
 fi
 
-echo "Link to the Guest Additions:"
+echo "Link to the Guest Additions (to be installed on the gest):"
 echo
 echo "${VBOX_DOWNLOAD_URL}"
 echo "${VBOX_DOWNLOAD_URL}/VBoxGuestAdditions_${VBOX_MAJOR_VERSION}.iso" 
