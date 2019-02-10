@@ -196,7 +196,7 @@ On the guest:
 
     if [ -e /home/denis/projects/test.txt ]; then echo "OK"; else echo "FAILED"; fi
 
-> Please note that, for some OS, you may need to explicitly add the kernel module `vboxfs` to the list of modules loaded at boot time. You do that by adding the line "`vboxfs`" to the end of the file `/etc/modules`. However, on Ubuntu 18.04, this is not necessaty.
+> Please note that, for some OS, you may need to explicitly add the kernel module `vboxfs` to the list of modules loaded at boot time. You do that by adding the line "`vboxfs`" to the end of the file `/etc/modules`. However, on Ubuntu 18.04, this is not necessary.
 
 # Notes for Ubuntu 18.04 minimal
 
