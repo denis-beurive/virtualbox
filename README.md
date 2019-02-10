@@ -34,3 +34,11 @@ Edit the file `build.sh` and set the values of the variables listed below:
 
 > Possible values for VM_TYPE can be found on [this link](https://www.virtualbox.org/browser/vbox/trunk/src/VBox/Main/src-all/Global.cpp).
 
+# Notes
+
+Stop the VM:
+
+    VBoxManage controlvm ubuntu-minimal-18.04 poweroff
+
+Eject the DVD after the installation: [https://techotom.wordpress.com/2012/09/22/ejecting-an-iso-from-a-virtualbox-vm-using-vboxmanage/](https://techotom.wordpress.com/2012/09/22/ejecting-an-iso-from-a-virtualbox-vm-using-vboxmanage/)
+
