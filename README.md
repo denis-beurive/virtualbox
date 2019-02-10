@@ -125,7 +125,9 @@ Once the guest addition is installed, we can configure the guest to use it.
 
 First, make sure that the _guest addition_ is installed (on the guest).
 
-On the guest, halt the VM: `sudo halt`
+Halt the guest (executed on the guest):
+
+    sudo halt
 
 On the host, stop the VM:
 
@@ -141,13 +143,15 @@ Configure the shared folder:
 
 > I you need to remove the shared folder, execute the following command: `VBoxManage sharedfolder remove "ubuntu-minimal-18.04" --name shared1`
 
+> The name "shared1" is chosen arbitrarily.
+
 Please note that we don't specify the path to the guest where the folder will be accessible from. This configuration is done on the guest. See below.
 
 Start the VM:
 
     VBoxHeadless --startvm "ubuntu-minimal-18.04" --vrde on
 
-On the guest, we will configure the system so it will mount the shared folder to a given directory at boot time.
+On the guest, we will configure the system so it will mount the shared folder (`/home/denis/Documents/Python/shared`) to a given directory at boot time.
 
 Get the UID and the GID of the user "denis":
 
@@ -170,15 +174,6 @@ Make sure that the kernel module `vboxfs` exists on the guest (it should):
     $ find /lib/modules/$(uname -r) -type f -name '*.ko' | grep vboxsf
     /lib/modules/4.15.0-45-generic/misc/vboxsf.ko
     /lib/modules/4.15.0-45-generic/kernel/ubuntu/vbox/vboxsf/vboxsf.ko
-
-Then add the kernel module `vboxfs` to the list of loaded modules at boot time. To do that, edit the file `/etc/modules` (as `root`). And add the line "`vboxfs`" to the end of the file. Example of `/etc/modules`:
-
-    # /etc/modules: kernel modules to load at boot time.
-    #
-    # This file contains the names of kernel modules that should be loaded
-    # at boot time, one per line. Lines beginning with "#" are ignored.
-
-    vboxfs
 
 On the host, make sure that the VM is well configured:
 
