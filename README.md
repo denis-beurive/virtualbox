@@ -41,6 +41,10 @@ Edit the file `build.sh` and set the values of the variables listed below:
 
 # Generic notes
 
+## Start the VM
+
+    VBoxHeadless --startvm "ubuntu-minimal-18.04" --vrde on
+
 ## Stop the VM
 
     VBoxManage controlvm "ubuntu-minimal-18.04" poweroff
