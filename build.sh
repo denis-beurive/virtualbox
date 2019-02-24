@@ -2,7 +2,7 @@
 
 SOURCE="${BASH_SOURCE[0]}"
 while [ -h "$SOURCE" ] ; do SOURCE="$(readlink "$SOURCE")"; done
-__DIR__="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+export __DIR__="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 . "${__DIR__}/lib/report.sh"
 . "${__DIR__}/lib/types.sh"
