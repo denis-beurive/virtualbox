@@ -63,6 +63,23 @@ echo "Ext pack URL tag:   ${VBOX_PACK_VERSION}"
 echo "Ext pack installed: ${VBOX_EXT_PACK}"
 echo "------------------------------------------------------------"
 echo
+echo "VM folder:  ${VM_FOLDER}"
+echo "ISO folder: ${VM_ISO_FOLDER}"
+echo "VDI folder: ${VM_VDI_FOLDER}"
+echo
+echo "FTP port:   ${PORT_FTP}"
+echo "HTTP port:  ${PORT_HTTP}"
+echo "SSH port:   ${PORT_SSH}"
+echo "MySql port: ${PORT_MYSQL}"
+echo
+
+echo "Do you wish to continue?"
+select yn in "Yes" "No"; do
+    case $yn in
+        Yes ) break;;
+        No ) exit;;
+    esac
+done
 
 # ------------------------------------------------------
 # Preparation
