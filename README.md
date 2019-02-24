@@ -31,13 +31,32 @@ For example:
 
 # Configuration
 
-Edit the file `build.sh` and set the values of the variables listed below:
+## VM
+
+Edit the file `vm-env.sh` and set the values of the variables listed below:
 
 * **VM_NAME**: the (arbitrary) name of the VM.
 * **VM_TYPE**: the OS type.
 * **VM_ISO_NAME**: the basename of the file that contains the ISO file. By default the ISO file must be stored under the directory `iso`. This can be changed however (see the variable **VM_ISO_FOLDER**).
 
 > Possible values for VM_TYPE can be found on [this link](https://www.virtualbox.org/browser/vbox/trunk/src/VBox/Main/src-all/Global.cpp).
+
+## Network
+
+Edit the file `net-env.sh` and set the values of the variables listed below:
+
+* **PORT_FTP**: FTP port as seen from the host.
+* **PORT_SSH**: SSH port as seen from the host.
+* **PORT_HTTP**: HTTP port as seen from the host.
+* **PORT_MYSQL**: MYSQL port as seen from the host.
+
+## System
+
+If you want to put the ISO file, the VDI file and the VMs in specific locations, then edit the file `sys-env.sh`.
+
+* **VM_FOLDER**: path to the directory where Virtual Box will store the VMs.
+* **VM_ISO_FOLDER**: path to the directory where you put the ISO file.
+* **VM_VDI_FOLDER**: path to the directory where you want to put the VDI files.
 
 # Generic notes
 
