@@ -155,7 +155,6 @@ VBoxManage modifyvm "${VM_NAME}" --natpf2 "guestftp,tcp,,${PORT_FTP},,21" || err
 
 echo "" && echo "SUCCESS !!!" && echo ""
 
-
 if [ ${VBOX_EXT_PACK} -eq 0 ]; then
     echo
     echo "------------------------------------------------------------"
@@ -174,6 +173,8 @@ if [ ${VBOX_EXT_PACK} -eq 0 ]; then
     echo
 fi
 
+echo
+echo
 echo "Link to the Guest Additions (to be installed on the gest):"
 echo
 echo "${VBOX_DOWNLOAD_URL}"
@@ -186,4 +187,16 @@ echo
 echo "Get information about the virtual box:"
 echo
 echo "VBoxManage showvminfo \"${VM_NAME}\""
+echo
+echo "Stop the VM:"
+echo 
+echo "VBoxManage controlvm \"${VM_NAME}\" poweroff"
+echo 
+echo "Remove the CDROM"
+echo
+echo "VBoxManage storageattach \"${VM_NAME}\" \\"
+echo "    --storagectl \"IDE Controller\" \\"
+echo "    --port 0 \\"
+echo "    --device 0 \\"
+echo "    --medium emptydrive"
 echo
