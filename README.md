@@ -67,11 +67,15 @@ List all available VMs:
 
 List all inaccessible VMs:
 
-    VBoxManage list vms | egrep "^\"<inaccessible>\"" |  sed 's/^.*{//; s/}$//'
+    VBoxManage list vms | egrep "^\"<inaccessible>\"" | sed 's/^.*{//; s/}$//'
 
 List all accessible VMs:
 
-    VBoxManage list vms | egrep -v "^\"<inaccessible>\"" |  sed 's/^.*{//; s/}$//'
+    VBoxManage list vms | egrep -v "^\"<inaccessible>\"" | sed 's/^.*{//; s/}$//'
+
+    # or:
+
+    VBoxManage list vms | egrep -v "^\"<inaccessible>\"" | sed 's/" .*$//; s/^"//'
 
 List all running VMs:
 

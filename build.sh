@@ -11,33 +11,37 @@ function get_default_machine_folder() {
   echo $(VBoxManage list systemproperties | grep "Default machine folder:" | sed 's/^Default machine folder:\s*//')
 }
 
-# You should configure the constant listed below.
-#
-# VM_NAME:
-#    arbitrary name for the VM.
-#
-# VM_TYPE:
-#    possible values for VM_TYPE can be found on the link below.
-#    https://www.virtualbox.org/browser/vbox/trunk/src/VBox/Main/src-all/Global.cpp
-#
-# VM_ISO_NAME:
-#    basename of the ISO file.
 
-readonly VM_NAME='ubuntu-minimal-18.04'
-readonly VM_TYPE='Ubuntu_64'
-readonly VM_ISO_NAME="ubuntu-minimal-18.04.iso"
+if [ -z "${VBOX_ENV}" ]; then
+  export VENV=""
 
-# Set network configration
+  while true; do
+      read -p "VBOX_ENV is not set. Do you wish to continue? (Y/N)" yn
+      case $yn in
+          [Yy]* ) break;;
+          [Nn]* ) exit;;
+          * ) echo "Please answer yes or no.";;
+      esac
+  done
 
-. "${__DIR__}/net-env.sh"
+else
+  export VENV="-${VBOX_ENV}"
+fi
 
-# Specific locations for elements:
-#   - VM_ISO_FOLDER: directory used to store the ISO files.
-#   - VM_FOLDER: directory used to store the VMs.
-#   - VM_VDI_FOLDER: directory used to store the Virtual Disk Images.
-# Note: these parameters are ignored if the value of USE_DEFAULT_LOCATIONS is set to 0.
+# Configuration for the VM.
 
-. "${__DIR__}/sys-env.sh"
+. "${__DIR__}/vm-env${VENV}.sh"
+
+# Network configuration.
+
+. "${__DIR__}/net-env${VENV}.sh"
+
+# Host configuration.
+
+. "${__DIR__}/sys-env${VENV}.sh"
+
+
+
 
 # ------------------------------------------------------
 # Constants
@@ -65,6 +69,7 @@ echo "------------------------------------------------------------"
 echo
 echo "VM folder:  ${VM_FOLDER}"
 echo "ISO folder: ${VM_ISO_FOLDER}"
+echo "ISO file:   ${VM_ISO_PATH}"
 echo "VDI folder: ${VM_VDI_FOLDER}"
 echo
 echo "FTP port:   ${PORT_FTP}"
@@ -74,7 +79,7 @@ echo "MySql port: ${PORT_MYSQL}"
 echo
 
 while true; do
-    read -p "Do you wish to continue?" yn
+    read -p "Do you wish to continue? (Y/N)" yn
     case $yn in
         [Yy]* ) break;;
         [Nn]* ) exit;;
@@ -86,8 +91,19 @@ done
 # Preparation
 # ------------------------------------------------------
 
-if [ -d "${VM_FOLDER}/${VM_NAME}" ]; then
-  cd "${VM_FOLDER}/${VM_NAME}" && rm -rf * && cd - && echo "VM folder deleted"
+function vm_exists() {
+  found="no"
+  for name in $(VBoxManage list vms | egrep -v "^\"<inaccessible>\"" | sed 's/" .*$//; s/^"//'); do
+    if [ "${name}" = "${VM_NAME}" ]; then
+      found="yes"
+    fi  
+  done
+  echo "${found}"
+}
+
+if [ "yes" = "$(vm_exists)" ]; then
+  echo "Delete the VM"
+  VBoxManage unregistervm "${VM_NAME}" --delete || error "Can not unregister the VM"
 fi
 
 if [ -f "${VM_VDI_PATH}" ]; then
@@ -100,6 +116,7 @@ readonly MACHINES_PATH=$(get_default_machine_folder)
 if [ ! "${MACHINES_PATH}" = "${VM_FOLDER}" ]; then
     VBoxManage setproperty machinefolder "${VM_FOLDER}" || error "Cannot set the path to the machines directory!"
 fi
+
 
 # ------------------------------------------------------
 # VM creation
