@@ -6,24 +6,19 @@ export __DIR__="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 . "${__DIR__}/lib/report.sh"
 . "${__DIR__}/lib/types.sh"
+. "${__DIR__}/lib/user.sh"
 
 function get_default_machine_folder() {
   echo $(VBoxManage list systemproperties | grep "Default machine folder:" | sed 's/^Default machine folder:\s*//')
 }
 
 
+
+
 if [ -z "${VBOX_ENV}" ]; then
   export VENV=""
-
-  while true; do
-      read -p "VBOX_ENV is not set. Do you wish to continue? (Y/N)" yn
-      case $yn in
-          [Yy]* ) break;;
-          [Nn]* ) exit;;
-          * ) echo "Please answer yes or no.";;
-      esac
-  done
-
+  echo "VBOX_ENV is not set."
+  prompt_continue
 else
   export VENV="-${VBOX_ENV}"
 fi
@@ -39,9 +34,6 @@ fi
 # Host configuration.
 
 . "${__DIR__}/sys-env${VENV}.sh"
-
-
-
 
 # ------------------------------------------------------
 # Constants
@@ -78,14 +70,7 @@ echo "SSH port:   ${PORT_SSH}"
 echo "MySql port: ${PORT_MYSQL}"
 echo
 
-while true; do
-    read -p "Do you wish to continue? (Y/N)" yn
-    case $yn in
-        [Yy]* ) break;;
-        [Nn]* ) exit;;
-        * ) echo "Please answer yes or no.";;
-    esac
-done
+prompt_continue
 
 # ------------------------------------------------------
 # Preparation
@@ -102,6 +87,11 @@ function vm_exists() {
 }
 
 if [ "yes" = "$(vm_exists)" ]; then
+  echo ""
+  echo "A VM named \"${VM_NAME}\" already exists!"
+  echo ""
+  prompt_continue "Do you want to delete it ? (Y/N) "
+  echo ""
   echo "Delete the VM"
   VBoxManage unregistervm "${VM_NAME}" --delete || error "Can not unregister the VM"
 fi
