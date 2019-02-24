@@ -149,9 +149,9 @@ VBoxManage modifyvm "${VM_NAME}" --natpf1 "guestssh,tcp,,${PORT_SSH},,22" || err
 
 VBoxManage modifyvm "${VM_NAME}" --natpf2 "guesthttp,tcp,,${PORT_HTTP},,80" || error "Can not configure NAT for HTTP"
 
-VBoxManage modifyvm "${VM_NAME}" --natpf2 "guesthttp,tcp,,${PORT_MYSQL},,3306" || error "Can not configure NAT for MySql"
+VBoxManage modifyvm "${VM_NAME}" --natpf2 "guestmysql,tcp,,${PORT_MYSQL},,3306" || error "Can not configure NAT for MySql"
 
-VBoxManage modifyvm "${VM_NAME}" --natpf2 "guesthttp,tcp,,${PORT_FTP},,21" || error "Can not configure NAT for FTP"
+VBoxManage modifyvm "${VM_NAME}" --natpf2 "guestftp,tcp,,${PORT_FTP},,21" || error "Can not configure NAT for FTP"
 
 echo "" && echo "SUCCESS !!!" && echo ""
 
