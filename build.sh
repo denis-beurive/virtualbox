@@ -7,13 +7,7 @@ export __DIR__="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 . "${__DIR__}/lib/report.sh"
 . "${__DIR__}/lib/types.sh"
 . "${__DIR__}/lib/user.sh"
-
-function get_default_machine_folder() {
-  echo $(VBoxManage list systemproperties | grep "Default machine folder:" | sed 's/^Default machine folder:\s*//')
-}
-
-
-
+. "${__DIR__}/lib/vbox.sh"
 
 if [ -z "${VBOX_ENV}" ]; then
   export VENV=""
@@ -76,17 +70,7 @@ prompt_continue
 # Preparation
 # ------------------------------------------------------
 
-function vm_exists() {
-  found="no"
-  for name in $(VBoxManage list vms | egrep -v "^\"<inaccessible>\"" | sed 's/" .*$//; s/^"//'); do
-    if [ "${name}" = "${VM_NAME}" ]; then
-      found="yes"
-    fi  
-  done
-  echo "${found}"
-}
-
-if [ "yes" = "$(vm_exists)" ]; then
+if [ "yes" = "$(vm_exists "${VM_NAME}")" ]; then
   echo ""
   echo "A VM named \"${VM_NAME}\" already exists!"
   echo ""
