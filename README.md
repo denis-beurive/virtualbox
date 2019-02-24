@@ -41,6 +41,14 @@ Edit the file `build.sh` and set the values of the variables listed below:
 
 # Generic notes
 
+## Path to Virtual Boc configurations and LOGs
+
+    $HOME/.config/VirtualBox/
+
+## Path to VMs
+
+    VBoxManage list systemproperties | grep "Default machine folder:" | sed 's/^Default machine folder:\s*//'
+
 ## Start the VM
 
     VBoxHeadless --startvm "ubuntu-minimal-18.04" --vrde on
