@@ -7,6 +7,10 @@ __DIR__="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 . "${__DIR__}/lib/report.sh"
 . "${__DIR__}/lib/types.sh"
 
+function get_default_machine_folder() {
+  echo $(VBoxManage list systemproperties | grep "Default machine folder:" | sed 's/^Default machine folder:\s*//')
+}
+
 # You should configure the constant listed below.
 #
 # VM_NAME:
@@ -23,13 +27,19 @@ readonly VM_NAME='ubuntu-minimal-18.04'
 readonly VM_TYPE='Ubuntu_64'
 readonly VM_ISO_NAME="ubuntu-minimal-18.04.iso"
 
-# Default locations for elements:
+readonly PORT_FTP=1021
+readonly PORT_SSH=1022
+readonly PORT_HTTP=1080
+readonly PORT_MYSQL=13306
+
+# Specific locations for elements:
 #   - VM_ISO_FOLDER: directory used to store the ISO files.
 #   - VM_FOLDER: directory used to store the VMs.
 #   - VM_VDI_FOLDER: directory used to store the Virtual Disk Images.
+# Note: these parameters are ignored if the value of USE_DEFAULT_LOCATIONS is set to 0.
 
+readonly VM_FOLDER="$(get_default_machine_folder)"
 readonly VM_ISO_FOLDER="${__DIR__}/iso"
-readonly VM_FOLDER="${__DIR__}/VMs"
 readonly VM_VDI_FOLDER="${__DIR__}/vdi"
 
 # ------------------------------------------------------
@@ -38,6 +48,7 @@ readonly VM_VDI_FOLDER="${__DIR__}/vdi"
 
 readonly VM_ISO_PATH="${VM_ISO_FOLDER}/${VM_ISO_NAME}"
 readonly VM_VDI_PATH="${VM_VDI_FOLDER}/${VM_NAME}.vdi"
+
 readonly VBOX_VERSION=$(VBoxManage --version)
 readonly VBOX_MAJOR_VERSION=$(echo "${VBOX_VERSION}" | sed 's/^\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*$/\1/')
 readonly VBOX_PACK_VERSION=$(echo "${VBOX_VERSION}" | sed 's/^\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)r\(.*\)$/\1-\2/')
@@ -65,7 +76,7 @@ rm -f "${VM_VDI_PATH}" && echo "VDI deleted"
 
 sleep 2
 
-readonly MACHINES_PATH=$(VBoxManage list systemproperties | grep "Default machine folder:" | sed 's/^Default machine folder:\s*//')
+readonly MACHINES_PATH=$(get_default_machine_folder)
 if [ ! "${MACHINES_PATH}" = "${VM_FOLDER}" ]; then
     VBoxManage setproperty machinefolder "${VM_FOLDER}" || error "Cannot set the path to the machines directory!"
 fi
@@ -114,9 +125,13 @@ VBoxManage modifyvm "${VM_NAME}" --boot1 dvd \
 VBoxManage modifyvm "${VM_NAME}" --memory 2048 \
                                  --vram 128 || error "Cannot set the RAM quantity"
 
-VBoxManage modifyvm "${VM_NAME}" --natpf1 "guestssh,tcp,,2222,,22" || error "Can not configure NAT for SSH"
+VBoxManage modifyvm "${VM_NAME}" --natpf1 "guestssh,tcp,,${PORT_SSH},,22" || error "Can not configure NAT for SSH"
 
-VBoxManage modifyvm "${VM_NAME}" --natpf2 "guesthttp,tcp,,8080,,80" || error "Can not configure NAT for HTTP"
+VBoxManage modifyvm "${VM_NAME}" --natpf2 "guesthttp,tcp,,${PORT_HTTP},,80" || error "Can not configure NAT for HTTP"
+
+VBoxManage modifyvm "${VM_NAME}" --natpf2 "guesthttp,tcp,,${PORT_MYSQL},,3306" || error "Can not configure NAT for MySql"
+
+VBoxManage modifyvm "${VM_NAME}" --natpf2 "guesthttp,tcp,,${PORT_FTP},,21" || error "Can not configure NAT for FTP"
 
 echo "" && echo "SUCCESS !!!" && echo ""
 
