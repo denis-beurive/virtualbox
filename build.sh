@@ -73,11 +73,12 @@ echo "SSH port:   ${PORT_SSH}"
 echo "MySql port: ${PORT_MYSQL}"
 echo
 
-echo "Do you wish to continue?"
-select yn in "Yes" "No"; do
+while true; do
+    read -p "Do you wish to continue?" yn
     case $yn in
-        Yes ) break;;
-        No ) exit;;
+        [Yy]* ) break;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer yes or no.";;
     esac
 done
 
