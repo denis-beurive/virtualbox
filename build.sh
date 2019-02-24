@@ -27,10 +27,9 @@ readonly VM_NAME='ubuntu-minimal-18.04'
 readonly VM_TYPE='Ubuntu_64'
 readonly VM_ISO_NAME="ubuntu-minimal-18.04.iso"
 
-readonly PORT_FTP=1021
-readonly PORT_SSH=1022
-readonly PORT_HTTP=1080
-readonly PORT_MYSQL=13306
+# Set network configration
+
+. "${__DIR__}/net-env.sh"
 
 # Specific locations for elements:
 #   - VM_ISO_FOLDER: directory used to store the ISO files.
@@ -38,9 +37,7 @@ readonly PORT_MYSQL=13306
 #   - VM_VDI_FOLDER: directory used to store the Virtual Disk Images.
 # Note: these parameters are ignored if the value of USE_DEFAULT_LOCATIONS is set to 0.
 
-readonly VM_FOLDER="$(get_default_machine_folder)"
-readonly VM_ISO_FOLDER="${__DIR__}/iso"
-readonly VM_VDI_FOLDER="${__DIR__}/vdi"
+. "${__DIR__}/sys-env.sh"
 
 # ------------------------------------------------------
 # Constants
@@ -71,8 +68,13 @@ echo
 # Preparation
 # ------------------------------------------------------
 
-cd "${VM_FOLDER}" && rm -rf * && cd - && echo "VM folder deleted"
-rm -f "${VM_VDI_PATH}" && echo "VDI deleted"
+if [ -d "${VM_FOLDER}/${VM_NAME}" ]; then
+  cd "${VM_FOLDER}/${VM_NAME}" && rm -rf * && cd - && echo "VM folder deleted"
+fi
+
+if [ -f "${VM_VDI_PATH}" ]; then
+  rm -f "${VM_VDI_PATH}" && echo "VDI deleted"
+fi
 
 sleep 2
 

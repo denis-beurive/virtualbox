@@ -1,0 +1,4 @@
+readonly PORT_FTP=1021
+readonly PORT_SSH=1022
+readonly PORT_HTTP=1080
+readonly PORT_MYSQL=13306
