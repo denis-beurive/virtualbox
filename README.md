@@ -51,6 +51,36 @@ Edit the file `build.sh` and set the values of the variables listed below:
 
 > You must stop the VM at the end of the installation process. Do not restart the VM from the installation menu. You need to eject the installation DVD before restarting the VM. And you cannot eject the DVD while the VM is running.
 
+## List all VMs
+
+List all available VMs:
+
+    VBoxManage list vms
+
+List all inaccessible VMs:
+
+    VBoxManage list vms | sed '/^\"<inaccessible>\"/s/^.*{//; s/}$//'
+
+List all running VMs:
+
+    VBoxManage list runningvms
+
+## Delete a VM
+
+    VBoxManage unregistervm <uuid|vmname> [--delete]
+
+Delete all inaccessible VMs:
+
+    for id in $(VBoxManage list vms | sed '/^\"<inaccessible>\"/s/^.*{//; s/}$//'); do
+        echo "removing ${id}"
+        VBoxManage unregistervm "${id}" --delete 2> /dev/null
+    done
+    if [ $(VBoxManage list vms | sed '/^\"<inaccessible>\"/s/^.*{//; s/}$//' | wc -l) -eq 0 ]; then
+        echo "SUCCESS"
+    else
+        echo "ERROR"
+    fi
+
 ## Show information about a VM
 
     VBoxManage showvminfo "ubuntu-minimal-18.04"
