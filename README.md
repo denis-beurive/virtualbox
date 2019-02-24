@@ -67,11 +67,11 @@ List all available VMs:
 
 List all inaccessible VMs:
 
-    VBoxManage list vms | egrep "/^\"<inaccessible>\"" |  sed 's/^.*{//; s/}$//'
+    VBoxManage list vms | egrep "^\"<inaccessible>\"" |  sed 's/^.*{//; s/}$//'
 
 List all accessible VMs:
 
-    VBoxManage list vms | egrep -v "/^\"<inaccessible>\"" |  sed 's/^.*{//; s/}$//'
+    VBoxManage list vms | egrep -v "^\"<inaccessible>\"" |  sed 's/^.*{//; s/}$//'
 
 List all running VMs:
 
@@ -83,11 +83,11 @@ List all running VMs:
 
 Delete all inaccessible VMs:
 
-    for id in $(VBoxManage list vms | egrep "/^\"<inaccessible>\"" |  sed 's/^.*{//; s/}$//'); do
+    for id in $(VBoxManage list vms | egrep "^\"<inaccessible>\"" |  sed 's/^.*{//; s/}$//'); do
         echo "removing ${id}"
         VBoxManage unregistervm "${id}" --delete 2> /dev/null
     done
-    if [ $(VBoxManage list vms | egrep "/^\"<inaccessible>\"" |  sed 's/^.*{//; s/}$//' | wc -l) -eq 0 ]; then
+    if [ $(VBoxManage list vms | egrep "^\"<inaccessible>\"" |  sed 's/^.*{//; s/}$//' | wc -l) -eq 0 ]; then
         echo "SUCCESS"
     else
         echo "ERROR"
