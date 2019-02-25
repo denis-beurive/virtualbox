@@ -32,11 +32,11 @@ readonly VM_ENV_SYS="${__DIR__}/sys-env${VENV}.sh"
 readonly VM_ISO_PATH="${VM_ISO_FOLDER}/${VM_ISO_NAME}"
 readonly VM_VDI_PATH="${VM_VDI_FOLDER}/${VM_NAME}.vdi"
 
-readonly VBOX_VERSION=$(VBoxManage --version)
-readonly VBOX_MAJOR_VERSION=$(echo "${VBOX_VERSION}" | sed 's/^\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*$/\1/')
-readonly VBOX_PACK_VERSION=$(echo "${VBOX_VERSION}" | sed 's/^\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)r\(.*\)$/\1-\2/')
-readonly VBOX_EXT_PACK=$(VBoxManage list extpacks | head -n 1 | sed 's/^Extension Packs: \([0-9][0-9]*\)$/\1/')
-readonly VBOX_DOWNLOAD_URL="https://download.virtualbox.org/virtualbox/${VBOX_MAJOR_VERSION}"
+readonly VBOX_VERSION=$(get_version)
+readonly VBOX_MAJOR_VERSION=$(get_major_version)
+readonly VBOX_PACK_VERSION=$(get_pack_version)
+readonly VBOX_EXT_PACK=$(get_extensions_count)
+readonly VBOX_DOWNLOAD_URL=$(get_download_url)
 
 if [ $(isInteger "${VBOX_EXT_PACK}") -eq 0 ]; then error "Cannot determine whether the extension packs are installed or not!"; fi
 if [ $(isVersionNumber "${VBOX_MAJOR_VERSION}") -eq 0 ]; then error "Cannot determine VirtualBox major version number!"; fi
@@ -86,8 +86,6 @@ if [ "yes" = "$(vm_exists "${VM_NAME}")" ]; then
   echo "Delete the VM"
   VBoxManage unregistervm "${VM_NAME}" --delete || error "Can not unregister the VM"
 fi
-
-exi 0
 
 if [ -f "${VM_VDI_PATH}" ]; then
   rm -f "${VM_VDI_PATH}" && echo "VDI deleted"
