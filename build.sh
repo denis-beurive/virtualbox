@@ -17,17 +17,13 @@ else
   export VENV="-${VBOX_ENV}"
 fi
 
-# Configuration for the VM.
+readonly VM_ENV_CONF="${__DIR__}/vm-env${VENV}.sh"
+readonly VM_ENV_NET="${__DIR__}/net-env${VENV}.sh"
+readonly VM_ENV_SYS="${__DIR__}/sys-env${VENV}.sh"
 
-. "${__DIR__}/vm-env${VENV}.sh"
-
-# Network configuration.
-
-. "${__DIR__}/net-env${VENV}.sh"
-
-# Host configuration.
-
-. "${__DIR__}/sys-env${VENV}.sh"
+. "${VM_ENV_CONF}"
+. "${VM_ENV_NET}"
+. "${VM_ENV_SYS}"
 
 # ------------------------------------------------------
 # Constants
@@ -53,15 +49,26 @@ echo "Ext pack URL tag:   ${VBOX_PACK_VERSION}"
 echo "Ext pack installed: ${VBOX_EXT_PACK}"
 echo "------------------------------------------------------------"
 echo
-echo "VM folder:  ${VM_FOLDER}"
-echo "ISO folder: ${VM_ISO_FOLDER}"
-echo "ISO file:   ${VM_ISO_PATH}"
-echo "VDI folder: ${VM_VDI_FOLDER}"
+echo "Host configuration:    ${VM_ENV_SYS}"
+echo "Network configuration: ${VM_ENV_NET}"
+echo "VM configuration:      ${VM_ENV_CONF}"
 echo
-echo "FTP port:   ${PORT_FTP}"
-echo "HTTP port:  ${PORT_HTTP}"
-echo "SSH port:   ${PORT_SSH}"
-echo "MySql port: ${PORT_MYSQL}"
+echo "Host:" 
+echo "   VM folder:  ${VM_FOLDER}"
+echo "   ISO folder: ${VM_ISO_FOLDER}"
+echo "   ISO file:   ${VM_ISO_PATH}"
+echo "   VDI folder: ${VM_VDI_FOLDER}"
+echo
+echo "Network:"
+echo "   FTP port:   ${PORT_FTP}"
+echo "   HTTP port:  ${PORT_HTTP}"
+echo "   SSH port:   ${PORT_SSH}"
+echo "   MySql port: ${PORT_MYSQL}"
+echo
+echo "VM:"
+echo "   Name: ${VM_NAME}"
+echo "   Type: ${VM_TYPE}"
+echo "   Iso:  ${VM_ISO_NAME}"
 echo
 
 prompt_continue
@@ -71,14 +78,16 @@ prompt_continue
 # ------------------------------------------------------
 
 if [ "yes" = "$(vm_exists "${VM_NAME}")" ]; then
-  echo ""
+  echo
   echo "A VM named \"${VM_NAME}\" already exists!"
-  echo ""
+  echo
   prompt_continue "Do you want to delete it ? (Y/N) "
-  echo ""
+  echo
   echo "Delete the VM"
   VBoxManage unregistervm "${VM_NAME}" --delete || error "Can not unregister the VM"
 fi
+
+exi 0
 
 if [ -f "${VM_VDI_PATH}" ]; then
   rm -f "${VM_VDI_PATH}" && echo "VDI deleted"
