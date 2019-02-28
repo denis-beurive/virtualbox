@@ -120,6 +120,56 @@ Delete all inaccessible VMs:
 
     VBoxManage showvminfo "ubuntu-minimal-18.04"
 
+## List all port forwarding rules for a given VM
+
+A port forwarding rule is defined by:
+
+* a **virtual network adapter**.
+* a name (the name of the rule, __relatively to the virtual network adapter__).
+
+> See [NAT Networking Settings (8.8.2.1)](https://www.virtualbox.org/manual/ch08.html):
+> 
+> With all these settings, the decimal number directly following the option name, 1-N in the list below, specifies the **virtual network adapter** whose settings should be changed.
+
+The command below shows the virtual network adapters and the names of rules, and much more data.
+
+    VBoxManage showvminfo ${VM_NAME} | egrep '^NIC [1-8] Rule'
+
+To print only the network adapters and the names of rules, you can execute the command listed in the rest of this section.
+
+The command below prints all the couples `(<virtual network adapter>, <name of rule>)` for a given virtual machine identified by its name.
+
+    $ VBoxManage showvminfo ${VM_NAME} | egrep '^NIC [1-8] Rule' | sed 's/^NIC //; s/Rule([0-9]*)://; s/,.*//'
+    1    name = guestftp
+    1    name = guesthttp
+    1    name = guestmysql
+    1    name = guestssh
+
+> `VM_NAME`: the name of the virtual box.
+
+* **`1`**: the **virtual network adapter**
+* **`guestftp`**: the name of a rule (defined within the virtual network adapter number 1).
+
+## Delete a port forwarding rule
+
+First, list all the couples `(<virtual network adapter>, <name of rule>)` for a given virtual machine identified by its name.
+
+    $ VBoxManage showvminfo ${VM_NAME} | egrep '^NIC [1-8] Rule' | sed 's/^NIC //; s/Rule([0-9]*)://; s/,.*//'
+    1    name = guestftp
+    1    name = guesthttp
+    1    name = guestmysql
+    1    name = guestssh
+
+> `VM_NAME`: the name of the virtual box.
+
+To delete the rule "`guesthttp`" (_that is defined within the virtual network adapter number 1_):
+
+    VBoxManage modifyvm ${VM_NAME} --natpf1 delete guesthttp
+
+More generally:
+
+    VBoxManage modifyvm ${VM_NAME} --natpf<N> delete <name>
+
 ## Eject the DVD
 
 Eject the DVD after the installation: [https://techotom.wordpress.com/2012/09/22/ejecting-an-iso-from-a-virtualbox-vm-using-vboxmanage/](https://techotom.wordpress.com/2012/09/22/ejecting-an-iso-from-a-virtualbox-vm-using-vboxmanage/)
