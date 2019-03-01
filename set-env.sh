@@ -1,4 +1,12 @@
 #!/bin/bash
+#
+# This script defines helper functions for VM management.
+#
+# - vmhelp:  print a short help message.
+# - vmstart: start a VM.
+# - vmstop:  stop a VM.
+#
+# Usage: . set-enn.sh
 
 SOURCE="${BASH_SOURCE[0]}"
 while [ -h "$SOURCE" ] ; do SOURCE="$(readlink "$SOURCE")"; done
