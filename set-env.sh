@@ -90,3 +90,31 @@ function vmstop {
         echo "FAILURE"
     fi
 }
+
+# Get the state of a VM.
+# @param [#1]: The name of the VM to stop.
+#              If this parameter is not specified, then the function assumes that the name of the
+#              VM is identified by the environment variable VM_NAME.
+
+function vmstate {
+    if [ $# -gt 1 ]; then
+        error "vmstate: too many arguments!"
+    fi
+
+    local VM=""
+    if [ $# -eq 0 ]; then
+        if [ -z "${VM_NAME}" ]; then
+            echo "vmstate: when called without argument, the environment variable VM_NAME must be defined!"
+            return
+        else 
+            VM="${VM_NAME}"
+        fi
+    else
+        VM="${1}"
+    fi
+
+    "${_VBoxManage}" showvminfo "${VM}" --machinereadable | egrep '^VMState=' | sed 's/^VMState=//; s/^"//; s/"$//'
+}
+
+
+
