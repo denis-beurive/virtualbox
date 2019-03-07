@@ -17,7 +17,7 @@ function vm_exists {
      exit 1
   fi
 
-  found="no"
+  local found="no"
   for name in $(VBoxManage list vms | egrep -v "^\"<inaccessible>\"" | sed 's/" .*$//; s/^"//'); do
     if [ "${name}" = "${1}" ]; then
       found="yes"
@@ -59,6 +59,6 @@ function get_extensions_count {
 # Return The URL where all the Virtual Box components can be downloaded.
 
 function get_download_url {
-    declare major_version=$(get_major_version)
+    local major_version=$(get_major_version)
     echo "https://download.virtualbox.org/virtualbox/${major_version}"
 }

@@ -116,9 +116,63 @@ Delete all inaccessible VMs:
         echo "ERROR"
     fi
 
-## Show information about a VM
+## Show the VirtualBox configuration for a VM
 
-    VBoxManage showvminfo "ubuntu-minimal-18.04"
+    VBoxManage showvminfo <name of the VM>
+
+    Or (useful if you write scripts):
+
+    VBoxManage showvminfo <name of the VM> --machinereadable
+
+> This information describes the "static" configuration of a VM.
+
+## Show guest properties
+
+List the available properties:
+
+    VBoxManage guestproperty enumerate <name of the VM>
+
+Get a specific property, identified by its ID:
+
+    VBoxManage guestproperty get <name of the VM> <property ID>
+
+> This information describes the "current" state of a guest. It depends on whether the guest is running or not.
+
+For example:
+
+    $ VBoxManage guestproperty enumerate py
+    Name: /VirtualBox/GuestInfo/OS/Product, value: Linux, timestamp: 1551948596559842000, flags: 
+    Name: /VirtualBox/GuestInfo/Net/0/V4/IP, value: 10.0.2.15, timestamp: 1551948596570365000, flags: 
+    Name: /VirtualBox/GuestInfo/Net/0/MAC, value: 080027E4FEC3, timestamp: 1551948596571229000, flags: 
+    Name: /VirtualBox/GuestInfo/OS/ServicePack, value: , timestamp: 1551948596561376000, flags: 
+    Name: /VirtualBox/HostInfo/VBoxVerExt, value: 5.2.26, timestamp: 1551948566576963000, flags: TRANSIENT, RDONLYGUEST
+    Name: /VirtualBox/GuestInfo/Net/0/V4/Netmask, value: 255.255.255.0, timestamp: 1551948596570679000, flags: 
+    Name: /VirtualBox/GuestInfo/OS/Version, value: #1 SMP Debian 4.9.144-3.1 (2019-02-19), timestamp: 1551948596560978000, flags: 
+    Name: /VirtualBox/GuestAdd/VersionExt, value: 5.2.26, timestamp: 1551948596561769000, flags: 
+    Name: /VirtualBox/GuestAdd/Revision, value: 128414, timestamp: 1551948596562767000, flags: 
+    Name: /VirtualBox/HostGuest/SysprepExec, value: , timestamp: 1551948566576613000, flags: TRANSIENT, RDONLYGUEST
+    Name: /VirtualBox/GuestInfo/OS/LoggedInUsers, value: 1, timestamp: 1551948596566065000, flags: TRANSIENT, TRANSRESET
+    Name: /VirtualBox/GuestInfo/Net/0/Status, value: Up, timestamp: 1551948596571334000, flags: 
+    Name: /VirtualBox/GuestInfo/Net/0/Name, value: enp0s3, timestamp: 1551948596571436000, flags: 
+    Name: /VirtualBox/HostGuest/SysprepArgs, value: , timestamp: 1551948566576660000, flags: TRANSIENT, RDONLYGUEST
+    Name: /VirtualBox/GuestAdd/Version, value: 5.2.26, timestamp: 1551948596561638000, flags: 
+    Name: /VirtualBox/HostInfo/VBoxRev, value: 128414, timestamp: 1551948566576996000, flags: TRANSIENT, RDONLYGUEST
+    Name: /VirtualBox/GuestInfo/Net/0/V4/Broadcast, value: 10.0.2.255, timestamp: 1551948596570519000, flags: 
+    Name: /VirtualBox/HostInfo/VBoxVer, value: 5.2.26, timestamp: 1551948566576928000, flags: TRANSIENT, RDONLYGUEST
+    Name: /VirtualBox/GuestInfo/OS/LoggedInUsersList, value: dev, timestamp: 1551948596565490000, flags: TRANSIENT, TRANSRESET
+    Name: /VirtualBox/GuestInfo/Net/Count, value: 1, timestamp: 1551948856691493000, flags: 
+    Name: /VirtualBox/GuestInfo/OS/Release, value: 4.9.0-8-amd64, timestamp: 1551948596560585000, flags: 
+    Name: /VirtualBox/GuestInfo/OS/NoLoggedInUsers, value: false, timestamp: 1551948596568255000, flags: TRANSIENT, TRANSRESET
+
+If the guest is running, then it has an IP address:
+
+    $ VBoxManage guestproperty get py /VirtualBox/GuestInfo/Net/0/V4/IP
+    Value: 10.0.2.15
+
+If the guest is not running:
+
+    $ VBoxManage guestproperty get py /VirtualBox/GuestInfo/Net/0/V4/IP
+    No value set!
 
 ## List all port forwarding rules for a given VM
 
