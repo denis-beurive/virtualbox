@@ -21,8 +21,11 @@ _VBoxHeadless='/usr/bin/VBoxHeadless'
 # Print the help.
 
 function vmhelp {
-    echo 'vmstart [<name of the VM>]'
-    echo 'vmstop  [<name of the VM>]'
+    echo 'vmstart [<name of the VM>] - Start a VM'
+    echo 'vmstop  [<name of the VM>] - Stop a VM'
+    echo 'vmstate [<name of the VM>] - Print VM state'
+    echo 'vmrun   [<name of the VM>] - Check whether a guest is running or not'
+    echo 'vmips   [<name of the VM>] - Print guest IPs'
 }
 
 # Start a VM
