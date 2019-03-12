@@ -1,11 +1,14 @@
 # Introduction
 
-This repository contains a script that can be used to build a VirtualBox virtual machine.
+This repository contains a script (`build.sh`) that can be used to build a VirtualBox virtual machine.
 
-This script will configure [port forwarding with NAT](https://www.virtualbox.org/manual/ch06.html#natforward) between the host and the guest.
- 
-* The TCP traffic to a _host interface_, on port 2222 will be forwarded to the guest on port 22 (this is SSH).
-* The TCP traffic to a _host interface_, on port 8080 will be forwarded to the guest on port 80 (this is HTTP).
+Please note that:
+
+* This script will configure [port forwarding with NAT](https://www.virtualbox.org/manual/ch06.html#natforward) between the host and the guest. Four port forwarding rules are configured:
+  * One rule for SSH.
+  * One rule for FTP.
+  * One rule for HTTP.
+  * One rule for MySql.
 
 # Prerequisites
 
@@ -31,7 +34,23 @@ For example:
 
 # Configuration
 
-## VM
+The names of the configuration listed below depends on the environment variable `VBOX_ENV`.
+
+If the environment variable `VBOX_ENV` is **NOT** set, then the script `build.sh`  will load the configuration files listed below:
+
+* `vm-env.sh`
+* `net-env.sh`
+* `sys-env.sh`
+
+Otherwise, the script `build.sh`  will load the configuration files listed below:
+
+* `vm-env-${VBOX_ENV}.sh`
+* `net-env-${VBOX_ENV}.sh`
+* `sys-env-${VBOX_ENV}.sh`
+
+> The variable `VBOX_ENV` allows you to create several sets of configuration files (for different environments).
+
+## vm-env.sh: elements used to build the VM
 
 Edit the file `vm-env.sh` and set the values of the variables listed below:
 
@@ -41,7 +60,7 @@ Edit the file `vm-env.sh` and set the values of the variables listed below:
 
 > Possible values for VM_TYPE can be found on [this link](https://www.virtualbox.org/browser/vbox/trunk/src/VBox/Main/src-all/Global.cpp).
 
-## Network
+## net-env.sh: set the port numbers
 
 Edit the file `net-env.sh` and set the values of the variables listed below:
 
@@ -50,7 +69,7 @@ Edit the file `net-env.sh` and set the values of the variables listed below:
 * **PORT_HTTP**: HTTP port as seen from the host.
 * **PORT_MYSQL**: MYSQL port as seen from the host.
 
-## System
+## sys-env.sh
 
 If you want to put the ISO file, the VDI file and the VMs in specific locations, then edit the file `sys-env.sh`.
 

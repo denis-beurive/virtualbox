@@ -11,8 +11,6 @@ export __DIR__="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 if [ -z "${VBOX_ENV}" ]; then
   export VENV=""
-  echo "VBOX_ENV is not set."
-  prompt_continue
 else
   export VENV="-${VBOX_ENV}"
 fi
@@ -20,6 +18,17 @@ fi
 readonly VM_ENV_CONF="${__DIR__}/vm-env${VENV}.sh"
 readonly VM_ENV_NET="${__DIR__}/net-env${VENV}.sh"
 readonly VM_ENV_SYS="${__DIR__}/sys-env${VENV}.sh"
+
+if [ -z "${VBOX_ENV}" ]; then
+  echo "VBOX_ENV is not set. Thus, this script will load its configuration from the files listed below:"
+  echo "- ${VM_ENV_CONF}"
+  echo "- ${VM_ENV_NET}"
+  echo "- ${VM_ENV_SYS}"
+  echo
+  echo "Note: this is OK. However, keep in mind that you can create several configuration files sets for different environments (if you need so)."
+  echo
+  prompt_continue
+fi
 
 . "${VM_ENV_CONF}"
 . "${VM_ENV_NET}"
@@ -190,7 +199,7 @@ echo "Stop the VM:"
 echo 
 echo "VBoxManage controlvm \"${VM_NAME}\" poweroff"
 echo 
-echo "Remove the CDROM"
+echo "Remove the CDROM:"
 echo
 echo "VBoxManage storageattach \"${VM_NAME}\" \\"
 echo "    --storagectl \"IDE Controller\" \\"
