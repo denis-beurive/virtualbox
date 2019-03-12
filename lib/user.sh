@@ -1,9 +1,10 @@
 function prompt_continue {
 
+    local question=''
     if [ $# -gt 0 ]; then
-        declare question="${1}"
+        question="${1}"
     else 
-        declare question="Do you wish to continue? (Y/N) "
+        question="Do you wish to continue? (Y/N) "
     fi
 
     while true; do
