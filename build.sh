@@ -207,3 +207,7 @@ echo "    --port 0 \\"
 echo "    --device 0 \\"
 echo "    --medium emptydrive"
 echo
+echo "First SSH connexion:"
+echo
+echo "ssh -v -o PreferredAuthentications=password -o PubkeyAuthentication=no -p ${PORT_SSH} user@localhost"
+echo
