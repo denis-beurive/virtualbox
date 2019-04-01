@@ -290,20 +290,23 @@ On the guest:
 
 Install the tools required to build the guest addition:
 
-    sudo apt-get install gcc
-    sudo apt-get install perl
-    sudo apt-get install build-essential
+As `root`:
 
-Then mount the ISO file:
+    apt-get install gcc
+    apt-get install perl
+    apt-get install build-essential
+    apt-get install "linux-headers-$(uname -r)"
+
+Then mount the ISO file and run the installation script:
 
     mkdir iso
-    sudo mount -o loop VBoxGuestAdditions_5.2.26.iso ./iso
+    mount -o loop VBoxGuestAdditions_5.2.26.iso ./iso
     cd iso
-    sudo ./VBoxLinuxAdditions.run
+    ./VBoxLinuxAdditions.run
 
 > This action may take a while.
 
-The reboot the guest:
+Then reboot the guest:
 
     sudo reboot
 
